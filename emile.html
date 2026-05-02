@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Football Game</title>
+<style>
+body { margin:0; overflow:hidden; background:green; }
+canvas { display:block; margin:auto; background:#228B22; }
+</style>
+</head>
+<body>
+
+<canvas id="game" width="900" height="500"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+// Player
+let player = { x:100, y:250 };
+
+// Ball
+let ball = { x:450, y:250, dx:0, dy:0 };
+
+let score = 0;
+
+// Controls
+document.addEventListener("keydown", function(e){
+    if(e.key === "ArrowUp") player.y -= 10;
+    if(e.key === "ArrowDown") player.y += 10;
+    if(e.key === "ArrowLeft") player.x -= 10;
+    if(e.key === "ArrowRight") player.x += 10;
+
+    if(e.key === " ") {
+        ball.dx = 12;
+        ball.dy = (Math.random()-0.5)*6;
+    }
+});
+
+function update(){
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    ball.dx *= 0.95;
+    ball.dy *= 0.95;
+
+    // Goal
+    if(ball.x > 870 && ball.y > 200 && ball.y < 300){
+        score++;
+        ball.x = 450;
+        ball.y = 250;
+        ball.dx = 0;
+        ball.dy = 0;
+        alert("GOAL! ⚽ Score: " + score);
+    }
+}
+
+function drawPlayer(x,y){
+    // Head
+    ctx.fillStyle = "#f5c16c";
+    ctx.beginPath();
+    ctx.arc(x, y-25, 12, 0, Math.PI*2);
+    ctx.fill();
+
+    // Body
+    ctx.fillStyle = "blue";
+    ctx.fillRect(x-12, y-15, 24, 35);
+
+    // Legs
+    ctx.fillRect(x-12, y+20, 8, 25);
+    ctx.fillRect(x+4, y+20, 8, 25);
+}
+
+function draw(){
+    ctx.clearRect(0,0,900,500);
+
+    // Field center line
+    ctx.strokeStyle="white";
+    ctx.beginPath();
+    ctx.moveTo(450,0);
+    ctx.lineTo(450,500);
+    ctx.stroke();
+
+    // Goal
+    ctx.fillStyle="red";
+    ctx.fillRect(870,200,30,100);
+
+    // Player
+    drawPlayer(player.x, player.y);
+
+    // Ball
+    ctx.fillStyle="white";
+    ctx.beginPath();
+    ctx.arc(ball.x, ball.y, 10, 0, Math.PI*2);
+    ctx.fill();
+
+    // Score
+    ctx.fillStyle="white";
+    ctx.font="20px Arial";
+    ctx.fillText("Score: "+score,20,30);
+
+    update();
+    requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+
+</body>
+</html>
